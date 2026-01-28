@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -6,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card"
 
 export default function Login() {
   const [flipped, setFlipped] = useState(false)
+  const navigate = useNavigate()
 
   return (
     <div className="relative flex h-screen w-screen bg-[#eef1f4] overflow-hidden">
@@ -75,7 +77,7 @@ export default function Login() {
                     <Input id="password" type="password" autoComplete="current-password" className="rounded-sm"/>
                   </div>
 
-                  <Button type="submit" className="w-full py-2 bg-[#1f4aa8] border-[#1f4aa8] hover:bg-[#163b87]">
+                  <Button type="submit" className="w-full py-2 bg-[#1f4aa8] border-[#1f4aa8] hover:bg-[#163b87]" onClick={() => navigate("/dashboard")}>
                     Login
                   </Button>
 
