@@ -12,7 +12,7 @@ export default function Login() {
   return (
     <div className="relative flex h-screen w-screen bg-[#eef1f4] overflow-hidden">
       <div
-        className={`absolute top-0 left-0 h-full w-1/2 bg-blue-800 flex items-center justify-center text-white text-6xl font-bold transition-transform duration-700 ease-in-out ${
+        className={`absolute top-0 left-0 h-full w-1/2 bg-blue-800 flex items-center justify-center text-white text-6xl font-bold transition-transform duration-700 ease-in-out z-10 ${
           flipped ? "translate-x-full" : "translate-x-0"
         }`}
       >

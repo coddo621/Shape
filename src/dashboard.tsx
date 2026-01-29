@@ -52,7 +52,6 @@ export default function Dashboard() {
                     Opened 2 days ago
                   </p>
                 </CardContent>
-
               </Card>
             ))}
           </div>
