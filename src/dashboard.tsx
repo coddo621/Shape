@@ -29,10 +29,7 @@ export default function Dashboard() {
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
-
-            {[...Array(60)].map((_, i) => (
-              <Card
-                key={i}
+            <Card
                 className="
                   cursor-pointer
                   transition-transform transition-shadow
@@ -46,14 +43,13 @@ export default function Dashboard() {
 
                 <CardContent className="p-2">
                   <h6 className="text-[0.95rem] font-medium truncate mb-1">
-                    Shape Survey {i + 1}
+                    Shape Survey
                   </h6>
                   <p className="text-sm text-gray-500 mb-0">
                     Opened 2 days ago
                   </p>
                 </CardContent>
               </Card>
-            ))}
           </div>
         </div>
       </main>
