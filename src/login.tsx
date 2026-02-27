@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,7 +9,17 @@ export default function Login() {
   const [flipped, setFlipped] = useState(false)
   const navigate = useNavigate()
 
-  const handleSignup = async (e: React.FormEvent) => {
+  useEffect(() => {
+    const emailInput = document.getElementById("email") as HTMLInputElement | null
+    const usernameInput = document.getElementById("username") as HTMLInputElement | null
+    const passwordInput = document.getElementById("password") as HTMLInputElement | null
+
+    if (emailInput) emailInput.value = ""
+    if (usernameInput) usernameInput.value = ""
+    if (passwordInput) passwordInput.value = ""
+  }, [flipped])
+
+  const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     const payload = {
@@ -23,6 +33,7 @@ export default function Login() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     })
+
   }
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -94,6 +105,7 @@ export default function Login() {
                   <Button
                     type="submit"
                     className="w-full py-2 bg-[#1f4aa8] border-[#1f4aa8] hover:bg-[#163b87]"
+                    onClick={() => setFlipped(false)}
                   >
                     Sign Up
                   </Button>
