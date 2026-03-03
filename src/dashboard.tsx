@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useNavigate } from "react-router-dom"
 
 export default function Dashboard() {
+const navigate = useNavigate();
+
   return (
     <div className="flex flex-col min-h-screen w-full bg-[#f1f3f4]">
       <nav className="bg-white border-b w-full">
@@ -10,7 +13,7 @@ export default function Dashboard() {
           <span className="font-semibold text-lg">Shape</span>
 
           <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" onClick={() => navigate("/forms/new")}>
               New form
             </Button>
             <Avatar>

@@ -1,12 +1,15 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import Login from './login.tsx'
-import Dashboard from './dashboard.tsx'
-import ProtectedRoute from "./protected_route.tsx"
-import './main.css' 
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-createRoot(document.getElementById('root')!).render(
+import Login from "./login";
+import Dashboard from "./dashboard";
+import ProtectedRoute from "./protected_route";
+import FormBuilderPage from "./FormBuilderPage"; // <-- import
+
+import "./main.css";
+
+createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
@@ -19,7 +22,15 @@ createRoot(document.getElementById('root')!).render(
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/forms/new"
+          element={
+            <ProtectedRoute>
+              <FormBuilderPage />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </BrowserRouter>
-  </StrictMode>,
-)
+  </StrictMode>
+);
