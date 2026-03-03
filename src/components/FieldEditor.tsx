@@ -20,11 +20,19 @@ export const FieldEditor: FC<FieldEditorProps> = ({ field, onChange, onRemove })
       />
       <select
         value={field.type}
-        onChange={(e) => onChange({ ...field, type: e.target.value as Field["type"] })}
+        onChange={(e) => {
+          const newType = e.target.value as Field["type"];
+          // if switching to checkbox, ensure there is at least one option
+          const newField: Field = {
+            ...field,
+            type: newType,
+            options: newType === "checkbox" ? field.options ?? [""] : undefined,
+          };
+          onChange(newField);
+        }}
         className="border rounded px-3 py-2 bg-white"
       >
         <option value="text">Text</option>
-        <option value="textarea">Textarea</option>
         <option value="checkbox">Checkbox</option>
       </select>
       <div className="flex items-center gap-2">
@@ -34,6 +42,48 @@ export const FieldEditor: FC<FieldEditorProps> = ({ field, onChange, onRemove })
         />
         <span>Required</span>
       </div>
+
+      {field.type === "checkbox" && (
+        <div className="mt-2">
+          <label className="block font-medium mb-1">Options</label>
+          {(field.options ?? []).map((opt, idx) => (
+            <div key={idx} className="flex items-center gap-2 mb-1">
+              <Input
+                placeholder={`Option ${idx + 1}`}
+                value={opt}
+                onChange={(e) => {
+                  const opts = [...(field.options ?? [])];
+                  opts[idx] = e.target.value;
+                  onChange({ ...field, options: opts });
+                }}
+              />
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={() => {
+                  const opts = [...(field.options ?? [])];
+                  opts.splice(idx, 1);
+                  onChange({ ...field, options: opts });
+                }}
+              >
+                Remove
+              </Button>
+            </div>
+          ))}
+          <Button
+            size="sm"
+            onClick={() =>
+              onChange({
+                ...field,
+                options: [...(field.options ?? []), ""],
+              })
+            }
+          >
+            Add option
+          </Button>
+        </div>
+      )}
+
       <Button variant="destructive" onClick={() => onRemove(field.id)}>
         Remove Field
       </Button>

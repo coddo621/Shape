@@ -10,7 +10,7 @@ export const FormBuilder: FC = () => {
   const [fields, setFields] = useState<Field[]>([]);
 
   const addField = () => {
-    const newField: Field = { id: uuid(), label: "", type: "text", required: false };
+    const newField: Field = { id: uuid(), label: "", type: "text", required: false, options: [] };
     setFields([...fields, newField]);
   };
 

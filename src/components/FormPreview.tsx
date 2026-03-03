@@ -14,8 +14,16 @@ export const FormPreview: FC<FormPreviewProps> = ({ fields }) => {
         <div key={field.id}>
           <label className="block mb-1 font-medium">{field.label}</label>
           {field.type === "text" && <Input placeholder={field.label} />}
-          {field.type === "textarea" && <textarea className="border rounded p-2 w-full" />}
-          {field.type === "checkbox" && <Checkbox />}
+          {field.type === "checkbox" && (
+            <div className="space-y-1">
+              {(field.options ?? []).map((opt, idx) => (
+                <label key={idx} className="flex items-center gap-2">
+                  <Checkbox />
+                  <span>{opt || `Option ${idx + 1}`}</span>
+                </label>
+              ))}
+            </div>
+          )}
         </div>
       ))}
     </form>
