@@ -31,9 +31,9 @@ export default function Login() {
     await fetch("http://localhost:5000/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      credentials: "include",
       body: JSON.stringify(payload),
     })
-
   }
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -105,7 +105,6 @@ export default function Login() {
                   <Button
                     type="submit"
                     className="w-full py-2 bg-[#1f4aa8] border-[#1f4aa8] hover:bg-[#163b87]"
-                    onClick={() => setFlipped(false)}
                   >
                     Sign Up
                   </Button>

@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 export default function Dashboard() {
   return (
     <div className="flex flex-col min-h-screen w-full bg-[#f1f3f4]">
-
       <nav className="bg-white border-b w-full">
         <div className="flex justify-between items-center px-3 md:px-4 py-2">
           <span className="font-semibold text-lg">Shape</span>
@@ -13,7 +13,10 @@ export default function Dashboard() {
             <Button variant="outline" size="sm">
               New form
             </Button>
-            <div className="w-8 h-8 rounded-full bg-[#9aa0a6]" />
+            <Avatar>
+              <AvatarImage src="https://github.com/shadcn.png" />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
           </div>
         </div>
       </nav>
