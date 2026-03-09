@@ -5,9 +5,5 @@ export interface Field {
     label: string;
     type: FieldType;
     required: boolean;
-    /**
-     * Labels for each checkbox when the field is a checkbox group.  
-     * Undefined for other field types.
-     */
     options?: string[];
 }

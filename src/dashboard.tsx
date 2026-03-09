@@ -36,16 +36,8 @@ const navigate = useNavigate();
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
             <Card
-                className="
-                  cursor-pointer
-                  transition-transform transition-shadow
-                  duration-150
-                  hover:-translate-y-0.5 hover:shadow-lg
-                  h-full
-                "
-              >
-
-                <div className="h-30 bg-gray-300 border-b border-gray-300" />
+                className="cursor-pointer transition-transform transition-shadow duration-150 hover:-translate-y-0.5 hover:shadow-lg h-full">
+                <div className="h-30 bg-gray-300 border-b border-gray-300"/>
 
                 <CardContent className="p-2">
                   <h6 className="text-[0.95rem] font-medium truncate mb-1">

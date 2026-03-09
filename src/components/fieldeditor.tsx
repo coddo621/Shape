@@ -22,7 +22,6 @@ export const FieldEditor: FC<FieldEditorProps> = ({ field, onChange, onRemove })
         value={field.type}
         onChange={(e) => {
           const newType = e.target.value as Field["type"];
-          // if switching to checkbox, ensure there is at least one option
           const newField: Field = {
             ...field,
             type: newType,

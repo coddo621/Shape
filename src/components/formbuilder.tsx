@@ -1,8 +1,8 @@
 import type { FC } from "react";
 import type { Field } from "../types/form";
 import { useState } from "react";
-import { FieldEditor } from "./FieldEditor";
-import { FormPreview } from "./FormPreview";
+import { FieldEditor } from "./fieldeditor";
+import { FormPreview } from "./formpreview";
 import { Button } from "@/components/ui/button";
 import { v4 as uuid } from "uuid";
 
