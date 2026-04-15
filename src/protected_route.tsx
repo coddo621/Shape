@@ -1,20 +1,16 @@
-import { useEffect, useState } from "react"
 import { Navigate } from "react-router-dom"
+import { useAuth } from "./context/useAuth"
 
 export default function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const [authorized, setAuthorized] = useState<boolean | null>(null)
+  const { user, loading } = useAuth()
 
-  useEffect(() => {
-    fetch("http://localhost:5000/me", {
-      credentials: "include",
-    })
-      .then(res => {
-        if (res.ok) setAuthorized(true)
-        else setAuthorized(false)
-      })
-  }, [])
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-[#f1f3f4]">
+        <div className="text-lg text-gray-600">Loading...</div>
+      </div>
+    )
+  }
 
-  if (authorized === null) return null
-
-  return authorized ? children : <Navigate to="/" />
+  return user ? children : <Navigate to="/" replace />
 }

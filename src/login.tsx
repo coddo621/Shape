@@ -4,10 +4,12 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
+import { useAuth } from "./context/useAuth"
 
 export default function Login() {
   const [flipped, setFlipped] = useState(false)
   const navigate = useNavigate()
+  const { login, signup, loading, error } = useAuth()
 
   useEffect(() => {
     const emailInput = document.getElementById("email") as HTMLInputElement | null
@@ -22,46 +24,34 @@ export default function Login() {
   const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    const payload = {
-      email: (document.getElementById("email") as HTMLInputElement).value,
-      username: (document.getElementById("username") as HTMLInputElement).value,
-      password: (document.getElementById("password") as HTMLInputElement).value,
-    }
+    const email = (document.getElementById("email") as HTMLInputElement).value
+    const username = (document.getElementById("username") as HTMLInputElement).value
+    const password = (document.getElementById("password") as HTMLInputElement).value
 
-    await fetch("http://localhost:5000/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify(payload),
-    })
+    const success = await signup(email, username, password)
+    
+    if (success) {
+      setFlipped(false)
+    }
   }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    const payload = {
-      username: (document.getElementById("username") as HTMLInputElement).value,
-      password: (document.getElementById("password") as HTMLInputElement).value,
-    }
+    const username = (document.getElementById("username") as HTMLInputElement).value
+    const password = (document.getElementById("password") as HTMLInputElement).value
 
-    const res = await fetch("http://localhost:5000/login", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      credentials: "include",
-      body: JSON.stringify(payload),
-    })
-
-    if(res.ok){
+    const success = await login(username, password)
+    
+    if (success) {
       navigate("/dashboard")
-    }else{
-      alert("Invalid username or password")
     }
   }
 
   return (
     <div className="relative flex h-screen w-screen bg-[#eef1f4] overflow-hidden">
       <div
-        className={`absolute top-0 left-0 h-full w-1/2 bg-blue-800 flex items-center justify-center text-white text-6xl font-bold transition-transform duration-700 ease-in-out z-10 ${
+        className={`absolute top-0 left-0 h-full w-1/2 bg-blue-800 flex items-center justify-center text-white text-6xl font-bold transition-transform duration-700 ease-in-out z-10 px-12 ${
           flipped ? "translate-x-full" : "translate-x-0"
         }`}
       >
@@ -79,34 +69,41 @@ export default function Login() {
               className="space-y-6"
               onSubmit={flipped ? handleSignup : handleLogin}
             >
+              {error && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
+                  {error}
+                </div>
+              )}
+
               {flipped ? (
                 <>
                   <div className="space-y-1">
                     <Label htmlFor="email" className="text-[1.7rem] font-medium">
                       Email
                     </Label>
-                    <Input id="email" type="email" className="rounded-sm" />
+                    <Input id="email" type="email" className="rounded-sm" disabled={loading} />
                   </div>
 
                   <div className="space-y-1">
                     <Label htmlFor="username" className="text-[1.7rem] font-medium">
                       Username
                     </Label>
-                    <Input id="username" type="text" className="rounded-sm" />
+                    <Input id="username" type="text" className="rounded-sm" disabled={loading} />
                   </div>
 
                   <div className="space-y-1">
                     <Label htmlFor="password" className="text-[1.7rem] font-medium">
                       Password
                     </Label>
-                    <Input id="password" type="password" className="rounded-sm" />
+                    <Input id="password" type="password" className="rounded-sm" disabled={loading} />
                   </div>
 
                   <Button
                     type="submit"
-                    className="w-full py-2 bg-[#1f4aa8] border-[#1f4aa8] hover:bg-[#163b87]"
+                    disabled={loading}
+                    className="w-full py-2 bg-[#1f4aa8] border-[#1f4aa8] hover:bg-[#163b87] disabled:opacity-50"
                   >
-                    Sign Up
+                    {loading ? "Creating account..." : "Sign Up"}
                   </Button>
 
                   <label className="px-0 text-sm mb-4">
@@ -116,6 +113,7 @@ export default function Login() {
                       variant="link"
                       className="px-0"
                       onClick={() => setFlipped(false)}
+                      disabled={loading}
                     >
                       Login
                     </Button>
@@ -132,6 +130,7 @@ export default function Login() {
                       type="text"
                       autoComplete="username"
                       className="rounded-sm"
+                      disabled={loading}
                     />
                   </div>
 
@@ -144,14 +143,16 @@ export default function Login() {
                       type="password"
                       autoComplete="current-password"
                       className="rounded-sm"
+                      disabled={loading}
                     />
                   </div>
 
                   <Button
                     type="submit"
-                    className="w-full py-2 bg-[#1f4aa8] border-[#1f4aa8] hover:bg-[#163b87]"
+                    disabled={loading}
+                    className="w-full py-2 bg-[#1f4aa8] border-[#1f4aa8] hover:bg-[#163b87] disabled:opacity-50"
                   >
-                    Login
+                    {loading ? "Logging in..." : "Login"}
                   </Button>
 
                   <label className="px-0 text-sm mb-4">
@@ -161,6 +162,7 @@ export default function Login() {
                       variant="link"
                       className="px-0"
                       onClick={() => setFlipped(true)}
+                      disabled={loading}
                     >
                       Sign up
                     </Button>
@@ -174,3 +176,5 @@ export default function Login() {
     </div>
   )
 }
+
+                     

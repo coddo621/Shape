@@ -2,24 +2,48 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useNavigate } from "react-router-dom"
+import { useAuth } from "./context/useAuth"
+
+function getInitials(username: string): string {
+  return username
+    .split(/\s+/)
+    .map(word => word[0]?.toUpperCase())
+    .filter(letter => letter)
+    .join("")
+}
 
 export default function Dashboard() {
-const navigate = useNavigate();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth()
+
+  const handleLogout = async () => {
+    await logout()
+    navigate("/")
+  }
 
   return (
     <div className="flex flex-col min-h-screen w-full bg-[#f1f3f4]">
       <nav className="bg-white border-b w-full">
         <div className="flex justify-between items-center px-3 md:px-4 py-2">
           <span className="font-semibold text-lg">Shape</span>
-
           <div className="flex items-center gap-3">
             <Button variant="outline" size="sm" onClick={() => navigate("/forms/new")}>
               New form
             </Button>
-            <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
+            <div className="flex items-center gap-2">
+              <Avatar>
+                <AvatarImage src="" />
+                <AvatarFallback>{user ? getInitials(user.username) : "?"}</AvatarFallback>
+              </Avatar>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={handleLogout}
+                className="text-sm"
+              >
+                Logout
+              </Button>
+            </div>
           </div>
         </div>
       </nav>
@@ -36,7 +60,7 @@ const navigate = useNavigate();
 
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-4">
             <Card
-                className="cursor-pointer transition-transform transition-shadow duration-150 hover:-translate-y-0.5 hover:shadow-lg h-full">
+                className="cursor-pointer transition-shadow duration-150 hover:-translate-y-0.5 hover:shadow-lg h-full">
                 <div className="h-30 bg-gray-300 border-b border-gray-300"/>
 
                 <CardContent className="p-2">
