@@ -4,6 +4,7 @@ export interface User {
   id: number
   username: string
   email: string
+  dark_mode: boolean
 }
 
 export interface AuthContextType {
@@ -14,6 +15,7 @@ export interface AuthContextType {
   signup: (email: string, username: string, password: string) => Promise<boolean>
   logout: () => Promise<void>
   checkAuth: () => Promise<void>
+  toggleDarkMode: () => Promise<void>
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined)

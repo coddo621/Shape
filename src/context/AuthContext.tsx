@@ -11,6 +11,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     checkAuth()
   }, [])
 
+  useEffect(() => {
+    // Apply dark mode to document when user changes
+    if (user?.dark_mode) {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
+  }, [user?.dark_mode])
+
   const checkAuth = async () => {
     try {
       setLoading(true)
@@ -110,8 +119,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  const toggleDarkMode = async () => {
+    if (!user) return
+
+    try {
+      const newDarkMode = !user.dark_mode
+      const res = await fetch("http://localhost:5000/user/preferences", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ dark_mode: newDarkMode }),
+      })
+
+      if (res.ok) {
+        setUser({ ...user, dark_mode: newDarkMode })
+      }
+    } catch (err) {
+      console.error("Failed to toggle dark mode:", err)
+    }
+  }
+
   return (
-    <AuthContext.Provider value={{ user, loading, error, login, signup, logout, checkAuth }}>
+    <AuthContext.Provider value={{ user, loading, error, login, signup, logout, checkAuth, toggleDarkMode }}>
       {children}
     </AuthContext.Provider>
   )

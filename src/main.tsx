@@ -3,10 +3,12 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import { AuthProvider } from "./context/AuthContext";
-import Login from "./login";
-import Dashboard from "./dashboard";
-import ProtectedRoute from "./protected_route";
-import FormBuilderPage from "./formbuilderpage";
+import LoginPage from "./LoginPage";
+import DashboardPage from "./DashboardPage";
+import ProtectedRoute from "./ProtectedRoute";
+import FormBuilderPage from "./FormBuilderPage";
+import FormEditPage from "./FormEditPage";
+import FormFillPage from "./FormFillPage";
 
 import "./main.css";
 
@@ -15,12 +17,12 @@ createRoot(document.getElementById("root")!).render(
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/" element={<LoginPage />} />
           <Route
             path="/dashboard"
             element={
               <ProtectedRoute>
-                <Dashboard />
+                <DashboardPage />
               </ProtectedRoute>
             }
           />
@@ -32,6 +34,15 @@ createRoot(document.getElementById("root")!).render(
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/forms/:id"
+            element={
+              <ProtectedRoute>
+                <FormEditPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/share/:id" element={<FormFillPage />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

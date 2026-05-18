@@ -23,3 +23,7 @@ dist-ssr
 *.sln
 *.sw?
 instance/users.db
+
+# Environment files
+.env
+.env.*

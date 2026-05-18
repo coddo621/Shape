@@ -6,18 +6,28 @@ import { Button } from "@/components/ui/button";
 
 interface FieldEditorProps {
   field: Field;
+  index?: number;
   onChange: (field: Field) => void;
   onRemove: (id: string) => void;
 }
 
-export const FieldEditor: FC<FieldEditorProps> = ({ field, onChange, onRemove }) => {
+export const FieldEditor: FC<FieldEditorProps> = ({ field, index, onChange, onRemove }) => {
   return (
-    <div className="border p-4 rounded mb-4 flex flex-col gap-2">
-      <Input
-        placeholder="Field Label"
-        value={field.label}
-        onChange={(e) => onChange({ ...field, label: e.target.value })}
-      />
+    <div className="rounded-3xl border border-slate-200 dark:border-border bg-white dark:bg-card p-5 shadow-sm">
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <div>
+          <div className="text-sm font-medium text-muted-foreground">Question {index ?? ""}</div>
+          <Input
+            placeholder="Question title"
+            value={field.label}
+            onChange={(e) => onChange({ ...field, label: e.target.value })}
+            className="mt-2"
+          />
+        </div>
+        <Button variant="destructive" size="sm" onClick={() => onRemove(field.id)}>
+          Remove
+        </Button>
+      </div>
       <select
         value={field.type}
         onChange={(e) => {
@@ -29,9 +39,13 @@ export const FieldEditor: FC<FieldEditorProps> = ({ field, onChange, onRemove })
           };
           onChange(newField);
         }}
-        className="border rounded px-3 py-2 bg-white"
+        className="border rounded px-3 py-2 bg-white dark:bg-background text-foreground border-border"
       >
         <option value="text">Text</option>
+        <option value="number">Number</option>
+        <option value="date">Date</option>
+        <option value="time">Time</option>
+        <option value="file">File</option>
         <option value="checkbox">Checkbox</option>
       </select>
       <div className="flex items-center gap-2">
@@ -39,12 +53,12 @@ export const FieldEditor: FC<FieldEditorProps> = ({ field, onChange, onRemove })
           checked={field.required}
           onCheckedChange={(checked) => onChange({ ...field, required: !!checked })}
         />
-        <span>Required</span>
+        <span className="text-foreground">Required</span>
       </div>
 
       {field.type === "checkbox" && (
         <div className="mt-2">
-          <label className="block font-medium mb-1">Options</label>
+          <label className="block font-medium mb-1 text-foreground">Options</label>
           {(field.options ?? []).map((opt, idx) => (
             <div key={idx} className="flex items-center gap-2 mb-1">
               <Input
@@ -82,10 +96,6 @@ export const FieldEditor: FC<FieldEditorProps> = ({ field, onChange, onRemove })
           </Button>
         </div>
       )}
-
-      <Button variant="destructive" onClick={() => onRemove(field.id)}>
-        Remove Field
-      </Button>
     </div>
   );
 };
