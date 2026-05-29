@@ -39,7 +39,7 @@ def create_app():
             )
         else:
             flask_secret = secrets.token_hex(32)
-            print("⚠️  Development mode: Generated temporary secret key.")
+            print("WARNING: Development mode: Generated temporary secret key.")
             print("   To use a persistent key, create .env.local with: FLASK_SECRET_KEY=<your-key>")
     
     app.secret_key = flask_secret

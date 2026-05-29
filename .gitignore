@@ -27,6 +27,7 @@ instance/users.db
 # Environment files
 .env
 .env.*
+!config/.env.example
 
 # Python
 __pycache__/

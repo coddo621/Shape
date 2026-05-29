@@ -2,7 +2,7 @@
 
 This guide explains how to safely deploy Shape to production with proper secret management.
 
-## ⚠️ NEVER commit secrets to version control
+## Security: Never Commit Secrets to Version Control
 
 - `config/.env.local` is gitignored — keep it locally only
 - `config/.env.example` is a template — commit this with placeholder values
@@ -155,7 +155,7 @@ Set secrets in Render dashboard → Environment
 
 ## Security Checklist
 
-- [ ] Never commit `config/.env` or `config/.env.local`
+- [ ] Never commit .env or .env.local files
 - [ ] `config/.env.example` has only placeholder values
 - [ ] `FLASK_SECRET_KEY` generated with `secrets.token_hex(32)`
 - [ ] All secrets set via platform, not in code

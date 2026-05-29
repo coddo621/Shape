@@ -1,8 +1,8 @@
-# Shape - Google Forms-Style Form Builder
+# Shape - Form Builder
 
 A full-stack form builder application inspired by Google Forms, built with React, TypeScript, Flask, and SQLite.
 
-## 🚀 Quick Start
+## Getting Started
 
 ### Prerequisites
 - Docker & Docker Compose (recommended)
@@ -47,7 +47,7 @@ npm run dev
 
 Access at: `http://localhost:5173`
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 Shape/
@@ -82,13 +82,13 @@ Shape/
 └── README.md
 ```
 
-## 🎨 Features
+## Features
 
 ### Core Form Building
-- ✅ Drag-and-drop field editor
-- ✅ Multiple field types (text, email, select, checkbox, date, etc.)
-- ✅ Form preview while editing
-- ✅ Rich form settings (presentation, restrictions, quiz options)
+- Drag-and-drop field editor
+- Multiple field types (text, email, select, checkbox, date, etc.)
+- Form preview while editing
+- Rich form settings (presentation, restrictions, quiz options)
 
 ### Form Settings
 - **Presentation**: Progress bar, shuffle questions, confirmation message
@@ -97,25 +97,25 @@ Shape/
 - **Defaults**: Account-level default settings for new forms
 
 ### Dashboard & Responses
-- ✅ Dashboard with form cards
-- ✅ Group responses by form with counts
-- ✅ View individual responses
-- ✅ Export data (planned)
+- Dashboard with form cards
+- Group responses by form with counts
+- View individual responses
+- Export data (planned)
 
 ### Security
-- ✅ User authentication with password hashing
-- ✅ Single-session login enforcement (token-based)
-- ✅ CORS protection
-- ✅ Session-based form access control
-- ✅ Form owner preview mode (doesn't save responses)
+- User authentication with password hashing
+- Single-session login enforcement (token-based)
+- CORS protection
+- Session-based form access control
+- Form owner preview mode (doesn't save responses)
 
 ### UI/UX
-- ✅ Dark mode toggle
-- ✅ Responsive design
-- ✅ Form cards redesigned (image removed, title/description swapped)
-- ✅ Account settings page with defaults
+- Dark mode toggle
+- Responsive design
+- Form cards redesigned (image removed, title/description swapped)
+- Account settings page with defaults
 
-## 🔑 Environment Variables
+## Environment Variables
 
 See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for complete configuration.
 
@@ -126,7 +126,7 @@ FLASK_ENV=development
 CORS_ORIGINS=http://localhost:5173
 ```
 
-## 🗄️ Database Schema
+## Database Schema
 
 **Users**
 - id, email, username, password, dark_mode, default_form_settings, session_token
@@ -137,7 +137,7 @@ CORS_ORIGINS=http://localhost:5173
 **FormResponses**
 - id, form_id, user_id, answers (JSON), created_at
 
-## 📡 API Endpoints
+## API Endpoints
 
 ### Authentication
 - `POST /signup` - Create new account
@@ -164,7 +164,7 @@ CORS_ORIGINS=http://localhost:5173
 - `GET /forms/<id>/responses` - Get responses for specific form
 - `POST /forms/<id>/responses` - Submit form response (with validation)
 
-## 🔐 Security Features
+## Security Features
 
 ### Single-Session Login
 Each user has a unique `session_token` stored in the database. Logging in on a new device invalidates the previous session automatically.
@@ -178,7 +178,7 @@ See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for deployment options.
 ### Form Owner Preview Mode
 When a form owner submits through the public share link, responses are not persisted, allowing owners to test without polluting data.
 
-## 🚢 Deployment
+## Deployment
 
 ### Docker Compose
 ```bash

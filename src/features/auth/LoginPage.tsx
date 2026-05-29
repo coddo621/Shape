@@ -67,7 +67,7 @@ export default function LoginPage() {
             >
               {error && (
                 <div className={`${ALERT_STYLES.error.inline} text-base! font-semibold! border-2! animate-pulse`}>
-                  ⚠️ Error: {error}
+                  Error: {error}
                 </div>
               )}
 
