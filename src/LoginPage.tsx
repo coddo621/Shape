@@ -25,7 +25,11 @@ export default function LoginPage() {
 
     const success = await signup(formState.email, formState.username, formState.password)
     if (success) {
+      alert("✓ Account created! Switching to login...")
       setFlipped(false)
+    } else {
+      // Error is already set in state, but add alert for visibility
+      alert(`❌ Signup failed: ${error || "Unknown error"}`)
     }
   }
 
@@ -35,6 +39,9 @@ export default function LoginPage() {
     const success = await login(formState.username, formState.password)
     if (success) {
       navigate("/dashboard")
+    } else {
+      // Error is already set in state, but add alert for visibility
+      alert(`❌ Login failed: ${error || "Unknown error"}`)
     }
   }
 
@@ -60,8 +67,8 @@ export default function LoginPage() {
               onSubmit={flipped ? handleSignup : handleLogin}
             >
               {error && (
-                <div className="p-3 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded text-red-700 dark:text-red-300 text-sm">
-                  {error}
+                <div className="p-4 bg-red-100 dark:bg-red-950 border-2 border-red-500 dark:border-red-700 rounded-lg text-red-800 dark:text-red-200 text-base font-semibold animate-pulse">
+                  ⚠️ Error: {error}
                 </div>
               )}
 

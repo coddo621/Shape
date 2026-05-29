@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "./context/useAuth"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef, useMemo } from "react"
 import type { Form, FormSubmission } from "./types/form"
 import { Moon, Sun } from "lucide-react"
 
@@ -22,11 +22,27 @@ export default function DashboardPage() {
   const [responses, setResponses] = useState<FormSubmission[]>([])
   const [activeTab, setActiveTab] = useState<"forms" | "responses">("forms")
   const [notification, setNotification] = useState<{ type: "success" | "error"; message: string } | null>(null)
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const userMenuRef = useRef<HTMLDivElement | null>(null)
 
   const notify = (message: string, type: "success" | "error" = "success") => {
     setNotification({ type, message })
     window.setTimeout(() => setNotification(null), 4000)
   }
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setUserMenuOpen(false)
+      }
+    }
+
+    if (userMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside)
+    }
+
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [userMenuOpen])
 
   useEffect(() => {
     const loadDashboard = async () => {
@@ -59,6 +75,16 @@ export default function DashboardPage() {
     const interval = window.setInterval(loadDashboard, 5000)
     return () => window.clearInterval(interval)
   }, [])
+
+  const groupedResponses = useMemo(() => {
+    const map: Record<number, { formName: string; items: FormSubmission[] }> = {}
+    responses.forEach((r) => {
+      const id = r.formId
+      if (!map[id]) map[id] = { formName: r.formName, items: [] }
+      map[id].items.push(r)
+    })
+    return Object.keys(map).map((k) => ({ formId: Number(k), formName: map[Number(k)].formName, items: map[Number(k)].items }))
+  }, [responses])
 
   const copyShareLink = async (formId: number | string) => {
     const url = `${window.location.origin}/share/${formId}`
@@ -114,13 +140,45 @@ export default function DashboardPage() {
               {user?.dark_mode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </Button>
             <div className="flex items-center gap-2">
-              <Avatar>
-                <AvatarImage src="" />
-                <AvatarFallback>{user ? getInitials(user.username) : "?"}</AvatarFallback>
-              </Avatar>
-              <Button 
-                variant="ghost" 
-                size="sm" 
+              <div ref={userMenuRef} className="relative">
+                <button
+                  type="button"
+                  onClick={() => setUserMenuOpen((prev) => !prev)}
+                  className="rounded-full border border-transparent p-1 transition hover:border-slate-300 dark:hover:border-slate-700"
+                >
+                  <Avatar>
+                    <AvatarImage src="" />
+                    <AvatarFallback>{user ? getInitials(user.username) : "?"}</AvatarFallback>
+                  </Avatar>
+                </button>
+                {userMenuOpen && (
+                  <div className="absolute right-0 z-10 mt-2 w-56 overflow-hidden rounded-xl border bg-white shadow-lg dark:bg-card dark:border-slate-700">
+                    <div className="px-4 py-3 text-sm">
+                      <div className="font-semibold text-foreground">{user?.username}</div>
+                      <div className="text-xs text-muted-foreground">{user?.email}</div>
+                    </div>
+                    <div className="border-t border-slate-200 dark:border-slate-700">
+                      <button
+                        type="button"
+                        onClick={toggleDarkMode}
+                        className="w-full px-4 py-3 text-left text-sm hover:bg-slate-50 dark:hover:bg-slate-800"
+                      >
+                        Toggle theme
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleLogout}
+                        className="w-full px-4 py-3 text-left text-sm hover:bg-slate-50 dark:hover:bg-slate-800"
+                      >
+                        Logout
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={handleLogout}
                 className="text-sm"
               >
@@ -188,28 +246,35 @@ export default function DashboardPage() {
                   No submissions yet. Share a form to collect responses.
                 </div>
               ) : (
-                responses.map((response) => (
-                  <Card key={response.id} className="overflow-hidden">
+                groupedResponses.map((group) => (
+                  <Card key={group.formId} className="overflow-hidden">
                     <CardContent className="p-4">
-                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-4">
+                      <div className="flex items-center justify-between mb-4">
                         <div>
                           <div className="text-sm text-gray-500">Form</div>
-                          <div className="font-semibold">{response.formName}</div>
+                          <div className="font-semibold">{group.formName}</div>
                         </div>
-                        <div className="text-right">
-                          <div className="text-sm text-gray-500">Submitted by</div>
-                          <div className="font-semibold">{response.user.username}</div>
-                        </div>
+                        <div className="text-sm text-gray-500">{group.items.length} responses</div>
                       </div>
-                      <div className="grid gap-3 sm:grid-cols-2">
-                        {response.answers.map((answer) => (
-                          <div key={answer.fieldId} className="rounded border border-gray-200 p-3 bg-gray-50">
-                            <div className="text-xs text-gray-500">{answer.label}</div>
-                            <div className="mt-1 text-sm text-gray-900 wrap-break-word">{answer.value || "—"}</div>
+
+                      <div className="space-y-3">
+                        {group.items.map((response) => (
+                          <div key={response.id} className="rounded border border-gray-100 p-3 bg-gray-50">
+                            <div className="flex items-center justify-between mb-2">
+                              <div className="text-sm text-gray-500">Submitted by</div>
+                              <div className="text-xs text-gray-400">{new Date(response.submittedAt).toLocaleString()}</div>
+                            </div>
+                            <div className="grid gap-3 sm:grid-cols-2">
+                              {response.answers.map((answer) => (
+                                <div key={answer.fieldId} className="rounded border border-gray-200 p-3 bg-white">
+                                  <div className="text-xs text-gray-500">{answer.label}</div>
+                                  <div className="mt-1 text-sm text-gray-900 wrap-break-word">{answer.value || "—"}</div>
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         ))}
                       </div>
-                      <div className="mt-4 text-xs text-gray-500">Submitted {new Date(response.submittedAt).toLocaleString()}</div>
                     </CardContent>
                   </Card>
                 ))

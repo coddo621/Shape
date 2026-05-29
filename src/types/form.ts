@@ -1,5 +1,26 @@
 export type FieldType = "text" | "number" | "date" | "time" | "file" | "checkbox";
 
+export type EmailCollectionOption = "do_not_collect" | "verified" | "responder_input";
+
+export interface FormSettings {
+    showProgressBar: boolean;
+    shuffleQuestionOrder: boolean;
+    confirmationMessage: string;
+    showSubmitAnotherResponseLink: boolean;
+    viewResultsSummary: boolean;
+    disableAutoSave: boolean;
+    allowResponseEditing: boolean;
+    acceptingResponses: boolean;
+    formClosedMessage: string;
+    collectEmailAddresses: EmailCollectionOption;
+    questionDefaultRequired: boolean;
+    isQuiz: boolean;
+    releaseMarksImmediately: boolean;
+    showMissedQuestions: boolean;
+    showCorrectAnswers: boolean;
+    showPointValues: boolean;
+}
+
 export interface Field {
     id: string;
     label: string;
@@ -13,6 +34,7 @@ export interface Form {
     name: string;
     description?: string;
     fields: Field[];
+    settings?: FormSettings;
     userId: number;
     createdAt: string;
 }
@@ -22,6 +44,7 @@ export interface SharedForm {
     name: string;
     description?: string;
     fields: Field[];
+    settings?: FormSettings;
     createdAt: string;
 }
 

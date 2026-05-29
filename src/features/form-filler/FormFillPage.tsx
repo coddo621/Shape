@@ -1,10 +1,17 @@
-import { useEffect, useState, useMemo } from "react"
-import { useParams, useNavigate } from "react-router-dom"
-import { useAuth } from "./context/useAuth"
-import type { Field, SharedForm, SubmissionAnswer, FormSettings } from "./types/form"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Checkbox } from "@/components/ui/checkbox"
+import { useEffect, useState, useMemo } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/useAuth";
+import type {
+  Field,
+  SharedForm,
+  SubmissionAnswer,
+  FormSettings,
+} from "@/types/form";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { API } from "@/constants/api";
+import { ALERT_STYLES } from "@/constants/colors";
 
 const defaultFormSettings: FormSettings = {
   showProgressBar: false,
@@ -23,178 +30,182 @@ const defaultFormSettings: FormSettings = {
   showMissedQuestions: false,
   showCorrectAnswers: false,
   showPointValues: false,
-}
+};
 
 function buildInitialValues(fields: Field[]) {
-  const initialValues: Record<string, string | string[]> = {}
+  const initialValues: Record<string, string | string[]> = {};
   fields.forEach((field) => {
-    initialValues[field.id] = field.type === "checkbox" ? [] : ""
-  })
-  return initialValues
+    initialValues[field.id] = field.type === "checkbox" ? [] : "";
+  });
+  return initialValues;
 }
 
 export default function FormFillPage() {
-  const { id } = useParams<{ id: string }>()
-  const navigate = useNavigate()
-  const { user } = useAuth()
-  const [form, setForm] = useState<SharedForm | null>(null)
-  const [values, setValues] = useState<Record<string, string | string[]>>({})
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState<string | null>(null)
-  const [submitted, setSubmitted] = useState(false)
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [form, setForm] = useState<SharedForm | null>(null);
+  const [values, setValues] = useState<Record<string, string | string[]>>({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [submitted, setSubmitted] = useState(false);
 
-  const activeSettings = form ? { ...defaultFormSettings, ...(form.settings ?? {}) } : defaultFormSettings
+  const activeSettings = form
+    ? { ...defaultFormSettings, ...(form.settings ?? {}) }
+    : defaultFormSettings;
 
   const displayFields = useMemo(() => {
-    if (!form) return []
-    const baseFields = [...form.fields]
-    return activeSettings.shuffleQuestionOrder ? baseFields.sort(() => Math.random() - 0.5) : baseFields
-  }, [form, activeSettings.shuffleQuestionOrder])
+    if (!form) return [];
+    const baseFields = [...form.fields];
+    return activeSettings.shuffleQuestionOrder
+      ? baseFields.sort(() => Math.random() - 0.5)
+      : baseFields;
+  }, [form, activeSettings.shuffleQuestionOrder]);
 
   useEffect(() => {
-    if (!id) return
+    if (!id) return;
 
     const load = async () => {
-      setLoading(true)
+      setLoading(true);
       try {
-        const res = await fetch(`http://localhost:5000/share/${id}`)
+        const res = await fetch(API.SHARE.GET(id));
         if (!res.ok) {
-          setError("Unable to load form")
-          return
+          setError("Unable to load form");
+          return;
         }
-        const data: SharedForm = await res.json()
-        setForm(data)
-        setValues(buildInitialValues(data.fields))
+        const data: SharedForm = await res.json();
+        setForm(data);
+        setValues(buildInitialValues(data.fields));
       } catch (err) {
-        console.error(err)
-        setError("Unable to load form")
+        console.error(err);
+        setError("Unable to load form");
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
+    };
 
-    load()
-  }, [id])
+    load();
+  }, [id]);
 
   const handleChange = (field: Field, value: string | string[]) => {
-    setError(null)
-    setSuccess(null)
-    setValues((prev) => ({ ...prev, [field.id]: value }))
-  }
+    setError(null);
+    setSuccess(null);
+    setValues((prev) => ({ ...prev, [field.id]: value }));
+  };
 
   const validateResponse = () => {
-    if (!form) return "Form is unavailable"
+    if (!form) return "Form is unavailable";
 
     for (const field of displayFields) {
-      const value = values[field.id]
+      const value = values[field.id];
 
       if (field.required) {
         if (field.type === "checkbox") {
           if (!Array.isArray(value) || value.length === 0) {
-            return `${field.label} is required.`
+            return `${field.label} is required.`;
           }
         } else {
-          const raw = String(value || "").trim()
+          const raw = String(value || "").trim();
           if (!raw) {
-            return `${field.label} is required.`
+            return `${field.label} is required.`;
           }
         }
       }
 
       if (field.type === "number" && value) {
-        const raw = String(value).trim()
+        const raw = String(value).trim();
         if (Number.isNaN(Number(raw))) {
-          return `${field.label} must be a valid number.`
+          return `${field.label} must be a valid number.`;
         }
       }
 
       if (field.type === "date" && value) {
-        const raw = String(value).trim()
-        const parsed = Date.parse(raw)
+        const raw = String(value).trim();
+        const parsed = Date.parse(raw);
         if (Number.isNaN(parsed)) {
-          return `${field.label} must be a valid date.`
+          return `${field.label} must be a valid date.`;
         }
       }
 
       if (field.type === "time" && value) {
-        const raw = String(value).trim()
-        const timePattern = /^\d{2}:\d{2}$/
+        const raw = String(value).trim();
+        const timePattern = /^\d{2}:\d{2}$/;
         if (!timePattern.test(raw)) {
-          return `${field.label} must be a valid time.`
+          return `${field.label} must be a valid time.`;
         }
       }
     }
 
-    return null
-  }
+    return null;
+  };
 
   const handleSubmit = async () => {
-    if (!form) return
+    if (!form) return;
     if (!user) {
-      setError("Please log in before submitting this form.")
-      return
+      setError("Please log in before submitting this form.");
+      return;
     }
 
-    const validationError = validateResponse()
+    const validationError = validateResponse();
     if (validationError) {
-      setError(validationError)
-      setSuccess(null)
-      return
+      setError(validationError);
+      setSuccess(null);
+      return;
     }
 
     const answers: SubmissionAnswer[] = displayFields.map((field) => {
-      const value = values[field.id]
+      const value = values[field.id];
       const normalized = field.type === "checkbox"
         ? Array.isArray(value)
           ? value.join(", ")
           : String(value || "")
-        : String(value || "")
+        : String(value || "");
 
       return {
         fieldId: field.id,
         label: field.label,
         value: normalized,
-      }
-    })
+      };
+    });
 
     try {
-      const res = await fetch(`http://localhost:5000/forms/${form.id}/responses`, {
+      const res = await fetch(API.FORMS.RESPONSES(form.id), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({ answers }),
-      })
+      });
 
       if (res.ok) {
-        setSuccess(activeSettings.confirmationMessage || "Response submitted successfully.")
-        setError(null)
-        setSubmitted(true)
+        setSuccess(activeSettings.confirmationMessage || "Response submitted successfully.");
+        setError(null);
+        setSubmitted(true);
       } else {
-        const data = await res.json()
-        setError(data.error || "Failed to submit response")
-        setSuccess(null)
+        const data = await res.json();
+        setError(data.error || "Failed to submit response");
+        setSuccess(null);
       }
     } catch (err) {
-      console.error(err)
-      setError("Failed to submit response")
-      setSuccess(null)
+      console.error(err);
+      setError("Failed to submit response");
+      setSuccess(null);
     }
-  }
+  };
 
   const handleSubmitAnother = () => {
-    if (!form) return
-    setSubmitted(false)
-    setSuccess(null)
-    setValues(buildInitialValues(form.fields))
-  }
+    if (!form) return;
+    setSubmitted(false);
+    setSuccess(null);
+    setValues(buildInitialValues(form.fields));
+  };
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#f1f3f4] dark:bg-background">
         <div className="text-foreground">Loading form...</div>
       </div>
-    )
+    );
   }
 
   if (!form) {
@@ -202,7 +213,7 @@ export default function FormFillPage() {
       <div className="min-h-screen flex items-center justify-center bg-[#f1f3f4] dark:bg-background">
         <div className="text-foreground">Form not found.</div>
       </div>
-    )
+    );
   }
 
   if (!activeSettings.acceptingResponses) {
@@ -214,7 +225,7 @@ export default function FormFillPage() {
           <Button variant="default" onClick={() => navigate('/dashboard')}>Back to dashboard</Button>
         </div>
       </div>
-    )
+    );
   }
 
   if (submitted) {
@@ -237,7 +248,7 @@ export default function FormFillPage() {
           )}
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -246,7 +257,9 @@ export default function FormFillPage() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between mb-6">
           <div>
             <h1 className="text-2xl font-bold text-foreground">{form.name}</h1>
-            {form.description && <p className="mt-2 text-sm text-muted-foreground">{form.description}</p>}
+            {form.description && (
+              <p className="mt-2 text-sm text-muted-foreground">{form.description}</p>
+            )}
             <p className="mt-2 text-sm text-slate-400 dark:text-slate-500">Share link form</p>
             {activeSettings.collectEmailAddresses === "responder_input" && (
               <p className="mt-2 text-sm text-muted-foreground">This form will ask respondents for their email address.</p>
@@ -258,15 +271,19 @@ export default function FormFillPage() {
           <Button variant="secondary" onClick={() => navigate("/dashboard")}>Back</Button>
         </div>
 
-        {error && <div className="mb-4 p-3 bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-300 rounded border dark:border-red-800">{error}</div>}
-        {success && <div className="mb-4 p-3 bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-300 rounded border dark:border-green-800">{success}</div>}
+        {error && (
+          <div className={`mb-4 rounded border ${ALERT_STYLES.error.inline}`}>{error}</div>
+        )}
+        {success && (
+          <div className={`mb-4 rounded border ${ALERT_STYLES.success.inline}`}>{success}</div>
+        )}
 
         {activeSettings.showProgressBar && (
           <div className="mb-6">
             <div className="h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
               <div className="h-full w-1/4 rounded-full bg-primary" />
             </div>
-            <div className="mt-2 text-xs text-muted-foreground">Progress bar is enabled for this form.</div>
+            <div className="mt-2 text-xs text-muted-foreground">Progress bar enabled for this form.</div>
           </div>
         )}
 
@@ -309,30 +326,34 @@ export default function FormFillPage() {
               <Input
                 type="file"
                 onChange={(e) => {
-                  const file = e.target.files?.[0]
-                  handleChange(field, file ? file.name : "")
+                  const file = e.target.files?.[0];
+                  handleChange(field, file ? file.name : "");
                 }}
               />
             )}
             {field.type === "checkbox" && (
               <div className="space-y-2">
                 {(field.options ?? []).map((option) => {
-                  const selected = Array.isArray(values[field.id]) && values[field.id].includes(option)
+                  const selected =
+                    Array.isArray(values[field.id]) &&
+                    values[field.id].includes(option);
                   return (
                     <label key={option} className="flex items-center gap-2">
                       <Checkbox
                         checked={selected}
                         onCheckedChange={(checked) => {
-                          const current: string[] = Array.isArray(values[field.id]) ? values[field.id] as string[] : []
+                          const current: string[] = Array.isArray(values[field.id])
+                            ? (values[field.id] as string[])
+                            : [];
                           const next = checked
                             ? [...current, option]
-                            : current.filter((value: string) => value !== option)
-                          handleChange(field, next)
+                            : current.filter((value: string) => value !== option);
+                          handleChange(field, next);
                         }}
                       />
                       <span>{option}</span>
                     </label>
-                  )
+                  );
                 })}
               </div>
             )}
@@ -343,9 +364,11 @@ export default function FormFillPage() {
           Submit response
         </Button>
         {!user && (
-          <span className="text-sm text-muted-foreground">You must be logged in to submit this form. Please login first.</span>
+          <span className="text-sm text-muted-foreground">
+            You must be logged in to submit. Please login first.
+          </span>
         )}
       </div>
     </div>
-  )
+  );
 }

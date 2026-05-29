@@ -119,28 +119,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  const toggleDarkMode = async () => {
-    if (!user) return
+  const updatePreferences = async (updates: { dark_mode?: boolean; defaultFormSettings?: any }) => {
+    if (!user) return false
 
     try {
-      const newDarkMode = !user.dark_mode
       const res = await fetch("http://localhost:5000/user/preferences", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ dark_mode: newDarkMode }),
+        body: JSON.stringify(updates),
       })
 
       if (res.ok) {
-        setUser({ ...user, dark_mode: newDarkMode })
+        setUser((prev) =>
+          prev
+            ? {
+                ...prev,
+                dark_mode: updates.dark_mode ?? prev.dark_mode,
+                defaultFormSettings:
+                  updates.defaultFormSettings ?? prev.defaultFormSettings,
+              }
+            : prev
+        )
+        return true
       }
     } catch (err) {
-      console.error("Failed to toggle dark mode:", err)
+      console.error("Failed to update preferences:", err)
     }
+
+    return false
+  }
+
+  const toggleDarkMode = async () => {
+    if (!user) return
+
+    const newDarkMode = !user.dark_mode
+    await updatePreferences({ dark_mode: newDarkMode })
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, error, login, signup, logout, checkAuth, toggleDarkMode }}>
+    <AuthContext.Provider value={{ user, loading, error, login, signup, logout, checkAuth, toggleDarkMode, updatePreferences }}>
       {children}
     </AuthContext.Provider>
   )

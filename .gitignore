@@ -27,3 +27,11 @@ instance/users.db
 # Environment files
 .env
 .env.*
+
+# Python
+__pycache__/
+venv/
+*.pyc
+
+# Database
+backend/instance/

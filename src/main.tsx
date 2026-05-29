@@ -3,12 +3,13 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import { AuthProvider } from "./context/AuthContext";
-import LoginPage from "./LoginPage";
-import DashboardPage from "./DashboardPage";
+import LoginPage from "./features/auth/LoginPage";
+import DashboardPage from "./features/dashboard/DashboardPage";
 import ProtectedRoute from "./ProtectedRoute";
-import FormBuilderPage from "./FormBuilderPage";
-import FormEditPage from "./FormEditPage";
-import FormFillPage from "./FormFillPage";
+import FormBuilderPage from "./features/form-builder/FormBuilderPage";
+import FormEditPage from "./features/form-builder/FormEditPage";
+import FormFillPage from "./features/form-filler/FormFillPage";
+import AccountSettingsPage from "./features/account/AccountSettingsPage";
 
 import "./main.css";
 
@@ -39,6 +40,14 @@ createRoot(document.getElementById("root")!).render(
             element={
               <ProtectedRoute>
                 <FormEditPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <AccountSettingsPage />
               </ProtectedRoute>
             }
           />
