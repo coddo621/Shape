@@ -2,7 +2,7 @@
 
 This guide explains how to safely deploy Shape to production with proper secret management.
 
-## ⚠️ NEVER commit secrets to version control
+## NEVER commit secrets to version control
 
 - `config/.env.local` is gitignored — keep it locally only
 - `config/.env.example` is a template — commit this with placeholder values

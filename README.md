@@ -207,7 +207,7 @@ git push heroku main
 
 **AWS/Google Cloud/Azure:** See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)
 
-## 📝 Development
+## Development
 
 ### Frontend
 ```bash
@@ -231,7 +231,7 @@ cd frontend
 npx tsc --noEmit
 ```
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 **Port already in use:**
 ```bash
@@ -253,21 +253,21 @@ docker compose restart backend
 - Set `FLASK_SECRET_KEY` via your platform's secret manager
 - See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)
 
-## 📚 Learn More
+## Learn More
 
 - [Deployment Guide](docs/DEPLOYMENT.md)
 - [Flask Documentation](https://flask.palletsprojects.com/)
 - [React Documentation](https://react.dev/)
 - [SQLAlchemy ORM](https://www.sqlalchemy.org/)
 
-## 📄 License
+## License
 
 MIT - See LICENSE file
 
-## 🤝 Contributing
+## Contributing
 
 Contributions welcome! Please follow the existing code style and create a pull request.
 
 ---
 
-**Built with** ❤️ using React, Flask, and TypeScript
+**Built with** using React, Flask, and TypeScript
