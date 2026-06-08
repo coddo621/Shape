@@ -27,6 +27,13 @@ COPY app/ ./app/
 # Create instance directory for database
 RUN mkdir -p instance
 
+# Create non-root user and switch to it (portable commands)
+RUN groupadd -g 1000 appuser || true && \
+    useradd -u 1000 -g appuser -M -s /usr/sbin/nologin appuser || true && \
+    chown -R appuser:appuser /app
+
+USER appuser
+
 # Expose port
 EXPOSE 5000
 

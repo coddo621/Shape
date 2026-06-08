@@ -24,6 +24,8 @@ docker compose up
 
 The app will be available at `http://localhost`
 
+> Note: Docker Compose launches the frontend on port 80 and the backend on port 5000. The frontend Nginx proxy forwards matching routes to the backend, so relative API paths work without exposing the backend directly.
+
 ## Development Setup (without Docker)
 
 ```bash
@@ -34,7 +36,10 @@ python3 -c "import secrets; print(secrets.token_hex(32))"
 FLASK_SECRET_KEY=your_generated_key_here
 DATABASE_URL=sqlite:///instance/users.db
 FLASK_ENV=development
+CORS_ORIGINS=http://localhost:5173,http://localhost
 ```
+
+> If you run the frontend development server directly, the app uses relative API URLs and the Vite proxy forwards them to the backend.
 
 ## Production Deployment
 
@@ -149,7 +154,8 @@ Set secrets in Render dashboard → Environment
 | `FLASK_SECRET_KEY` | In `config/.env.local` | **Platform secrets** |
 | `FLASK_ENV` | `development` | `production` |
 | `DATABASE_URL` | `sqlite:///` | Use managed DB (PostgreSQL, MySQL) |
-| `CORS_ORIGINS` | `http://localhost:5173` | Your domain URL |
+| `CORS_ORIGINS` | `http://localhost:5173,http://localhost` | Your domain URL |
+| `VITE_API_BASE_URL` | Not required for local proxy builds | Optional backend address for direct Vite dev proxying |
 | `FLASK_DEBUG` | `True` | `False` |
 | `SESSION_COOKIE_SECURE` | `False` | `True` (HTTPS only) |
 

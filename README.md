@@ -11,10 +11,10 @@ A full-stack form builder application inspired by Google Forms, built with React
 ### Start with Docker
 
 ```bash
-# 1. Copy environment template
+# 1. Create local environment file
 cp config/.env.example config/.env.local
 
-# 2. Generate a Flask secret key (paste into .env.local)
+# 2. Generate a Flask secret key and add it to config/.env.local
 python3 -c "import secrets; print(secrets.token_hex(32))"
 
 # 3. Start the application
@@ -22,6 +22,8 @@ docker compose up
 ```
 
 Access the app at: `http://localhost`
+
+> Note: the frontend is served by Nginx and proxies backend routes to the Flask API. The frontend uses relative API URLs by default, so no hard-coded backend host is needed.
 
 ### Start Without Docker
 
@@ -123,8 +125,10 @@ See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for complete configuration.
 ```bash
 FLASK_SECRET_KEY=your_generated_key_here
 FLASK_ENV=development
-CORS_ORIGINS=http://localhost:5173
+CORS_ORIGINS=http://localhost:5173,http://localhost
 ```
+
+> Frontend API calls are relative by default. If you need to override the backend address for Vite development, use `VITE_API_BASE_URL`, but the app is designed to work with the local dev proxy and Docker Compose reverse proxy without hard-coded backend URLs.
 
 ## Database Schema
 
@@ -150,19 +154,23 @@ CORS_ORIGINS=http://localhost:5173
 - `PUT /user/preferences` - Update preferences
 
 ### Forms (Protected)
-- `GET /forms` - List user's forms
-- `POST /forms` - Create new form
-- `GET /forms/<id>` - Get form details
-- `PUT /forms/<id>` - Update form
-- `DELETE /forms/<id>` - Delete form
+- `GET /api/forms` - List user's forms
+- `POST /api/forms` - Create new form
+- `GET /api/forms/<id>` - Get form details
+- `PUT /api/forms/<id>` - Update form
+- `DELETE /api/forms/<id>` - Delete form
 
 ### Public Form (Unprotected)
-- `GET /share/<form_id>` - Get form for public submission
+- `GET /api/share/<form_id>` - Get form for public submission (frontend route: `/share/<form_id>`)
+
+> Note: form owners can generate edit links for submitted responses. These links use an `editToken` to authorize updates without requiring login.
 
 ### Responses
-- `GET /responses` - Get all responses for user's forms (grouped)
-- `GET /forms/<id>/responses` - Get responses for specific form
-- `POST /forms/<id>/responses` - Submit form response (with validation)
+- `GET /api/responses` - Get all responses for user's forms (grouped)
+- `GET /api/forms/<id>/responses` - Get responses for specific form
+- `POST /api/forms/<id>/responses` - Submit form response (with validation)
+- `PUT /api/responses/<id>` - Update a saved response (requires owner auth or edit token)
+- `GET /api/responses/<id>` - Retrieve a saved response for editing (owner auth or edit token)
 
 ## Security Features
 
